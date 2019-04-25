@@ -32,8 +32,6 @@ topdog$Intelligence[topdog$Intelligence > 40] <- 1
 topdog <- topdog %>% subset(Intelligence <= 1) #This command just subsets all of the intelligence rows with a numeric variable, getting rid of the NA values which makes the plot cleaner
 topdog <- topdog %>% mutate(Intelligence = as.factor(Intelligence))
 
-#The last command just subsets all of the intelligence rows with a numeric variable, getting rid of the NA values which makes the plot cleaner
-
 #Since some column titles were off place on the Excel sheet, I selected the correct titles and renamed them for simplicity.
 ```
 

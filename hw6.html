@@ -234,8 +234,6 @@ topdog$Intelligence[topdog$Intelligence &gt; 40] &lt;- 1
 topdog &lt;- topdog %&gt;% subset(Intelligence &lt;= 1) #This command just subsets all of the intelligence rows with a numeric variable, getting rid of the NA values which makes the plot cleaner
 topdog &lt;- topdog %&gt;% mutate(Intelligence = as.factor(Intelligence))
 
-#The last command just subsets all of the intelligence rows with a numeric variable, getting rid of the NA values which makes the plot cleaner
-
 #Since some column titles were off place on the Excel sheet, I selected the correct titles and renamed them for simplicity.</code></pre>
 <ol start="2" style="list-style-type: decimal">
 <li>Create a graphics similar to the <a href="https://informationisbeautiful.net/visualizations/best-in-show-whats-the-top-data-dog/">top dogs</a> figure. Your figure need to display the following information with appropriate plotting elements:</li>
