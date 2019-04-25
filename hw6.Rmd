@@ -1,0 +1,62 @@
+---
+title: 'Homework #6'
+author: "Max Ruehle"
+date: "4/24/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Top dogs
+
+In this homework, you will try to reproduce the fantastic infographic for [top dogs](https://informationisbeautiful.net/visualizations/best-in-show-whats-the-top-data-dog/), originally produced by David McCandless. The raw data can be found [here](https://docs.google.com/spreadsheets/d/1l_HfF5EaN-QgnLc2UYdCc7L2CVrk0p3VdGB1godOyhk/edit#gid=10). You can download this file by File -- Download As -- Microsoft Excel (.xlsx).
+
+**Submission instructions**: Create a folder named `ds202_hw6`, and name the RMarkDown file including your solutions `hw6.Rmd` under this folder. For the submission, create a GitHub repository named `ds202_hw6` under your GitHub account, and push both `hw6.Rmd` and the knitted `hw6.html` before the deadline. I will assume you use the same GitHub username as for your HW5 submission. The latest version of your homework appearing on GitHub before the deadline is graded. *It is crucial to follow the exact folder structure and file names*, so that your homework can be reproduced and graded by an automated script. This homework is **due on April 25** before class.
+
+1. Import the data and clean appropriately. To read in the data, you can use `readxl::read_xlsx('fileNameHere', sheet='sheetNameHere')`. Required data are in the sheets `Best in show` and `Best in show full sheet`. Take extra care on the column names and the first few rows of the data frame after read in.
+
+```{r}
+windows.options(width=10, height=10)
+library(ggplot2)
+library(dplyr)
+library(tidyverse)
+
+topdog <- readxl::read_xlsx('KIB - Best in Show (public).xlsx', sheet = 'Best in show full sheet', skip = 3) %>% select(Breed = `Dog breed`, Type = `American Kennel Club group`, Size = '..32', Score = `intelligence + longevity + ailments + 50% (purchase price + food costs + grooming score). highest possible score: 4.5`, Popularity = `pure breeds, American Kennel Club 2011`, Intelligence = `1 = easiest to train / learn new commands`)
+topdog[topdog == 'no data'] <- NA
+topdog <- topdog %>% mutate(Type = as.factor(Type), Size = as.factor(Size), Intelligence = as.numeric(Intelligence))
+topdog$Size <- factor(topdog$Size, levels(topdog$Size)[c(3, 2, 1)])
+topdog$Intelligence[topdog$Intelligence <= 40] <- 0
+topdog$Intelligence[topdog$Intelligence > 40] <- 1
+topdog <- topdog %>% subset(Intelligence <= 1) #This command just subsets all of the intelligence rows with a numeric variable, getting rid of the NA values which makes the plot cleaner
+topdog <- topdog %>% mutate(Intelligence = as.factor(Intelligence))
+
+#The last command just subsets all of the intelligence rows with a numeric variable, getting rid of the NA values which makes the plot cleaner
+
+#Since some column titles were off place on the Excel sheet, I selected the correct titles and renamed them for simplicity.
+```
+
+
+2. Create a graphics similar to the  [top dogs](https://informationisbeautiful.net/visualizations/best-in-show-whats-the-top-data-dog/) figure. Your figure need to display the following information with appropriate plotting elements:
+
+- breed of dog
+- type of dog (work, toy, etc.)
+- size of dog
+- data score 
+- popularity
+- intelligence of the dog
+- appropriate legends & explanation
+
+```{r}
+ggplot(topdog, aes(x = Score, y = Popularity, color = Type, size = as.numeric(Size), shape = Intelligence, label = Breed)) + geom_point() + geom_text(check_overlap = TRUE, size = 3, hjust = 1.05) + guides(size=guide_legend(title="Size"), shape=guide_legend(title="Intelligence")) + ggtitle('TopDog Plot')
+```
+
+In this plot, the Score of the dog is ranked on the x axis while the popularity is on the y axis. The different colors of the points represent the types of dogs. The size of the points correspond with the size of the dog, with 1 being small dogs, 2 being medium sized dogs, and 3 being large dogs. The shape of the points represents the dogs' intelligence: A score of 0 means they are in the lower 50% quartile while a 1 means they are in the upper 50% quartile. 
+
+Hints and Notes:
+
+- The breed of dog can be displayed without the silhouttes (text only is fine)
+- Avoid (too much) overlap!
+- Choose a good color scheme.
+- Your submission is supposed to be fully reproducible, i.e. the TA and I will 'knit' your submission in RStudio. 
